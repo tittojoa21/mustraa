@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Descargar Imagen{% endblock %}
+
+{% block content %}
+<h2>Descargar Imagen</h2>
+<div id="imageList" class="row"></div>
+
+<script>
+    function fetchImages() {
+        fetch('/images')
+        .then(response => response.json())
+        .then(data => {
+            let imageListHtml = '';
+            data.images.forEach(image => {
+                imageListHtml += `<div class="col-md-3 mb-4">
+                    <div class="card">
+                        <img src="${image}" class="card-img-top" alt="Image"/>
+                        <div class="card-body text-center">
+                            <a href="${image}" download class="btn btn-primary">Descargar</a>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('imageList').innerHTML = imageListHtml;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Fetch images when the page loads
+    window.onload = fetchImages;
+</script>
+{% endblock %}

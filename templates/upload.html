@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Subir Imagen{% endblock %}
+
+{% block content %}
+<h2>Subir Imagen</h2>
+<form id="uploadForm" enctype="multipart/form-data" class="mb-3">
+    <div class="form-group">
+        <input type="file" class="form-control-file" id="imageUpload" accept="image/*" multiple />
+    </div>
+    <button type="button" class="btn btn-primary" onclick="uploadImages()">Subir</button>
+</form>
+<div id="imagePreview" class="mt-4"></div>
+
+<script>
+    function uploadImages() {
+        const fileInput = document.getElementById('imageUpload');
+        const files = fileInput.files;
+        const formData = new FormData();
+        for (const file of files) {
+            formData.append('images', file);
+        }
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.filePaths) {
+                let previewHtml = '';
+                data.filePaths.forEach(filePath => {
+                    previewHtml += `<img src="${filePath}" alt="Image" class="img-fluid"/>`;
+                });
+                document.getElementById('imagePreview').innerHTML = previewHtml;
+            } else {
+                alert('Error: ' + JSON.stringify(data));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+{% endblock %}
